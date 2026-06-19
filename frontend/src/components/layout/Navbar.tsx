@@ -10,6 +10,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const { totalQuantity } = useAppSelector(state => state.cart);
   const { appCategories = [], theme } = useAppSelector(state => state.site);
+  const { user, isAuthenticated } = useAppSelector(state => state.user);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -28,6 +29,22 @@ export default function Navbar() {
 
   return (
     <header className="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+      {/* Top Utility Bar */}
+      <div className="bg-gray-50 border-b border-gray-100 text-gray-500 py-1.5 px-4 md:px-6">
+        <div className="w-full md:max-w-7xl mx-auto flex justify-between items-center text-[10px] md:text-xs">
+          <span>Welcome to TrendMart!</span>
+          <div className="flex items-center gap-2 md:gap-4 font-semibold">
+            <Link href="/admin" className="hover:text-black transition-colors">Admin Panel</Link>
+            <span className="text-gray-300">|</span>
+            {isMounted && isAuthenticated && user?.role === 'vendor' ? (
+              <Link href="/vendor/dashboard" className="text-orange-600 hover:text-orange-700 transition-colors font-bold">Vendor Dashboard</Link>
+            ) : (
+              <Link href="/vendor/login" className="hover:text-black transition-colors">Vendor Portal</Link>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="w-full md:max-w-7xl mx-auto">
         
         {/* MOBILE VIEW (< md) */}
@@ -126,7 +143,9 @@ export default function Navbar() {
             <div className="flex items-center gap-8">
               <Link href="/me" className="flex flex-col items-center gap-1 text-gray-700 hover:text-black transition-colors">
                 <User size={24} />
-                <span className="text-xs font-bold">Sign In</span>
+                <span className="text-xs font-bold">
+                  {isMounted && isAuthenticated && user ? user.name.split(' ')[0] : 'Sign In'}
+                </span>
               </Link>
               
               <Link href="/me" className="flex flex-col items-center gap-1 text-gray-700 hover:text-black transition-colors">

@@ -16,6 +16,7 @@ export interface Product {
   hidden?: boolean;       // hidden from storefront
   soldCount?: number;
   isBestseller?: boolean;
+  vendorId?: string;      // associated vendor ID
 }
 
 interface ProductState {
@@ -37,6 +38,7 @@ const INITIAL_DUMMY_PRODUCTS: Product[] = [
     discount: 8,
     soldCount: 5400,
     isBestseller: true,
+    vendorId: 'V001',
   },
   {
     id: '2',
@@ -52,6 +54,7 @@ const INITIAL_DUMMY_PRODUCTS: Product[] = [
     discount: 12,
     soldCount: 1200,
     isBestseller: true,
+    vendorId: 'V001',
   },
   {
     id: '3',
@@ -66,6 +69,7 @@ const INITIAL_DUMMY_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=800&auto=format&fit=crop',
     discount: 9,
     soldCount: 850,
+    vendorId: 'V003',
   },
   {
     id: '4',
@@ -80,6 +84,7 @@ const INITIAL_DUMMY_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=800&auto=format&fit=crop',
     discount: 18,
     soldCount: 420,
+    vendorId: 'V002',
   },
 ];
 

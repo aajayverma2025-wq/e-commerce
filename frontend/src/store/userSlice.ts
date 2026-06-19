@@ -24,6 +24,7 @@ interface UserState {
     email: string;
     phone?: string;
     role: 'customer' | 'vendor' | 'admin';
+    vendorId?: string;
   } | null;
   isAuthenticated: boolean;
   wishlist: WishlistItem[];
@@ -45,12 +46,13 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ email: string; name: string; phone?: string; role?: 'customer' | 'vendor' | 'admin' }>) => {
+    login: (state, action: PayloadAction<{ email: string; name: string; phone?: string; role?: 'customer' | 'vendor' | 'admin'; vendorId?: string }>) => {
       state.user = {
         email: action.payload.email,
         name: action.payload.name || action.payload.email.split('@')[0],
         phone: action.payload.phone,
         role: action.payload.role || 'customer',
+        vendorId: action.payload.vendorId,
       };
       state.isAuthenticated = true;
 

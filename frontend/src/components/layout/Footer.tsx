@@ -30,7 +30,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">Make Money with Us</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/vendor/register" className="hover:text-white transition-colors">Sell on MegaMart</Link></li>
+              <li><Link href="/vendor/login" className="hover:text-white transition-colors">Vendor Portal</Link></li>
               <li><Link href="/affiliate" className="hover:text-white transition-colors">Affiliate Program</Link></li>
             </ul>
           </div>

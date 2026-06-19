@@ -43,7 +43,7 @@ interface UserDashboardConfig {
   showHistoryTab: boolean;
 }
 
-interface ThemeConfig {
+export interface ThemeConfig {
   primaryColor: string;
   accentColor: string;
   logoText: string;
@@ -70,6 +70,24 @@ export interface TrendItem {
   sold: string;
 }
 
+export interface AboutPageData {
+  title: string;
+  subtitle: string;
+  story: string;
+  mission: string;
+  image?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+}
+
+export interface HomepageSectionsConfig {
+  showHeroSlider: boolean;
+  showPromos: boolean;
+  showCategories: boolean;
+  showFilterTabs: boolean;
+}
+
 interface SiteState {
   banner: BannerData;
   banners: BannerData[];
@@ -81,6 +99,8 @@ interface SiteState {
   trendsTabs: string[];
   paymentSettings: PaymentSettings;
   userDashboardConfig: UserDashboardConfig;
+  homepageSections?: HomepageSectionsConfig;
+  aboutPage?: AboutPageData;
 }
 
 const initialState: SiteState = {
@@ -195,7 +215,23 @@ const initialState: SiteState = {
     { id: '2', name: 'Francila Women\'s French Shirt', price: 8.60, img: 'https://images.unsplash.com/photo-1551163943-3f6a855d1153?w=400&h=400&fit=crop', sold: '80+' },
     { id: '3', name: 'Summer Elegant Maxi Dress', price: 15.50, img: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=400&h=400&fit=crop', sold: '250+' },
     { id: '4', name: 'Minimalist Sunglasses', price: 4.20, img: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=400&fit=crop', sold: '500+' },
-  ]
+  ],
+  homepageSections: {
+    showHeroSlider: true,
+    showPromos: true,
+    showCategories: true,
+    showFilterTabs: true,
+  },
+  aboutPage: {
+    title: 'About Our Store',
+    subtitle: 'Providing quality products since 2024',
+    story: 'Welcome to MegaMart, your number one source for all things electronics, fashion, and everyday essentials. We are dedicated to giving you the very best of product quality, with a focus on dependability, customer service, and uniqueness.',
+    mission: 'Our mission is to democratize premium shopping by making high-quality, curated products accessible and affordable to everyone, backed by top-class support.',
+    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80&auto=format&fit=crop',
+    contactEmail: 'support@megamart.com',
+    contactPhone: '+1 555-0100',
+    address: '123 E-Commerce Blvd, Suite 100, Digital City',
+  }
 };
 
 export const siteSlice = createSlice({
@@ -238,6 +274,12 @@ export const siteSlice = createSlice({
     updateTrendsFeed: (state, action: PayloadAction<TrendItem[]>) => {
       state.trendsFeed = action.payload;
     },
+    updateHomepageSections: (state, action: PayloadAction<HomepageSectionsConfig>) => {
+      state.homepageSections = action.payload;
+    },
+    updateAboutPage: (state, action: PayloadAction<AboutPageData>) => {
+      state.aboutPage = action.payload;
+    },
     incrementTrends: (state, action: PayloadAction<{ id: string; name: string; price: number; image: string; quantity: number }[]>) => {
       action.payload.forEach(cartItem => {
         const existingTrend = state.trendsFeed.find(t => t.id === cartItem.id);
@@ -258,5 +300,5 @@ export const siteSlice = createSlice({
   },
 });
 
-export const { updateBanner, updateBanners, updateTrendsBanner, updateTrendsTabs, updateTheme, updateNavigation, updateAppCategories, updateTrendsFeed, incrementTrends, updatePaymentSettings, updateUserDashboardConfig } = siteSlice.actions;
+export const { updateBanner, updateBanners, updateTrendsBanner, updateTrendsTabs, updateTheme, updateNavigation, updateAppCategories, updateTrendsFeed, incrementTrends, updatePaymentSettings, updateUserDashboardConfig, updateHomepageSections, updateAboutPage } = siteSlice.actions;
 export default siteSlice.reducer;

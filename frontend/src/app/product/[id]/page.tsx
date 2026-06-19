@@ -4,7 +4,7 @@ import { use, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Star, Truck, ShieldCheck, Heart, ShoppingCart, ArrowLeft, Share2, ChevronRight } from 'lucide-react';
+import { Star, Truck, ShieldCheck, Heart, ShoppingCart, ArrowLeft, Share2, ChevronRight, Store } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { addToCart } from '@/store/cartSlice';
 import { toggleWishlist } from '@/store/userSlice';
@@ -15,9 +15,11 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
 
   const products = useAppSelector(state => state.products.items);
   const { wishlist = [] } = useAppSelector((state) => state.user);
+  const { vendors = [] } = useAppSelector((state) => state.vendors);
   const dispatch = useAppDispatch();
 
   const product = products.find(p => p.id === productId);
+  const vendor = product ? vendors.find(v => v.id === product.vendorId) : null;
 
   // Gallery state
   const allImages = (product?.images && product.images.length > 0)
@@ -140,6 +142,29 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
               <span className="text-xl text-gray-400 line-through mb-1">${product.originalPrice.toFixed(2)}</span>
             )}
           </div>
+
+          {vendor && (
+            <div className="mb-6 p-3 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white border flex items-center justify-center overflow-hidden flex-shrink-0">
+                  {vendor.storeConfig?.logo ? (
+                    <img src={vendor.storeConfig.logo} alt="Logo" className="max-w-full max-h-full object-contain" />
+                  ) : (
+                    <Store className="text-orange-500" size={20} />
+                  )}
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-bold uppercase tracking-wider">Sold By</span>
+                  <span className="font-bold text-gray-800 text-sm leading-tight">{vendor.businessName}</span>
+                </div>
+              </div>
+              <Link href={`/shop/${vendor.id}`}>
+                <span className="text-xs font-bold text-orange-500 hover:text-orange-600 hover:underline cursor-pointer">
+                  Visit Storefront &gt;
+                </span>
+              </Link>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex gap-3 mb-8">

@@ -6,7 +6,7 @@ import {
   HeadphonesIcon, CalendarCheck, ShieldCheck,
   ShoppingCart, Heart, LogOut, User, ChevronRight,
   MapPin, CreditCard, Bell, HelpCircle, Settings,
-  Ticket, Coins, Wallet, Gift, Star, Edit3
+  Ticket, Coins, Wallet, Gift, Star, Edit3, Store
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -189,25 +189,47 @@ export default function MePage() {
       <div className="mx-4 mt-4">
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
           <p className="px-5 pt-5 pb-2 text-xs font-black text-gray-400 uppercase tracking-wider">Account Settings</p>
-          {[
-            { icon: <MapPin size={16} />,     label: 'My Addresses',      sub: 'Manage delivery addresses',  grad: 'from-orange-400 to-red-400',     href: '/account' },
-            { icon: <CreditCard size={16} />, label: 'Payment Methods',   sub: 'Cards & wallets',            grad: 'from-blue-400 to-indigo-500',    href: '/checkout' },
-            { icon: <Bell size={16} />,        label: 'Notifications',     sub: 'Alerts & preferences',       grad: 'from-yellow-400 to-orange-400',  href: '/account' },
-            { icon: <HelpCircle size={16} />, label: 'Help & Support',    sub: 'FAQs & contact us',          grad: 'from-green-400 to-emerald-500',  href: '/account' },
-            { icon: <Settings size={16} />,   label: 'Account Settings',  sub: 'Privacy & security',         grad: 'from-gray-400 to-slate-500',     href: '/account' },
-          ].map((item, i, arr) => (
-            <Link key={item.label} href={item.href}
-              className={`flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 transition-colors ${i < arr.length-1 ? 'border-b border-gray-50' : 'mb-2'}`}>
-              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.grad} flex items-center justify-center text-white flex-shrink-0 shadow-sm`}>
-                {item.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-gray-800">{item.label}</p>
-                <p className="text-xs text-gray-400">{item.sub}</p>
-              </div>
-              <ChevronRight size={16} className="text-gray-300 flex-shrink-0" />
-            </Link>
-          ))}
+          {(() => {
+            const menuItems = [
+              { icon: <MapPin size={16} />,     label: 'My Addresses',      sub: 'Manage delivery addresses',  grad: 'from-orange-400 to-red-400',     href: '/account' },
+              { icon: <CreditCard size={16} />, label: 'Payment Methods',   sub: 'Cards & wallets',            grad: 'from-blue-400 to-indigo-500',    href: '/checkout' },
+              { icon: <Bell size={16} />,        label: 'Notifications',     sub: 'Alerts & preferences',       grad: 'from-yellow-400 to-orange-400',  href: '/account' },
+              { icon: <HelpCircle size={16} />, label: 'Help & Support',    sub: 'FAQs & contact us',          grad: 'from-green-400 to-emerald-500',  href: '/account' },
+              { icon: <Settings size={16} />,   label: 'Account Settings',  sub: 'Privacy & security',         grad: 'from-gray-400 to-slate-500',     href: '/account' },
+            ];
+
+            if (user?.role === 'vendor') {
+              menuItems.unshift({
+                icon: <Store size={16} />,
+                label: 'Vendor Dashboard',
+                sub: 'Manage storefront configurations',
+                grad: 'from-orange-500 to-pink-500',
+                href: '/vendor/dashboard'
+              });
+            } else if (user?.role === 'admin') {
+              menuItems.unshift({
+                icon: <ShieldCheck size={16} />,
+                label: 'Admin Panel',
+                sub: 'Manage store settings & products',
+                grad: 'from-purple-500 to-indigo-600',
+                href: '/admin'
+              });
+            }
+
+            return menuItems.map((item, i, arr) => (
+              <Link key={item.label} href={item.href}
+                className={`flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 transition-colors ${i < arr.length-1 ? 'border-b border-gray-50' : 'mb-2'}`}>
+                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.grad} flex items-center justify-center text-white flex-shrink-0 shadow-sm`}>
+                  {item.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-800">{item.label}</p>
+                  <p className="text-xs text-gray-400">{item.sub}</p>
+                </div>
+                <ChevronRight size={16} className="text-gray-300 flex-shrink-0" />
+              </Link>
+            ));
+          })()}
         </div>
       </div>
 

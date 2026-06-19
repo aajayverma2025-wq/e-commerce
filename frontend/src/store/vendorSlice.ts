@@ -2,6 +2,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type VendorStatus = 'Active' | 'Pending Approval' | 'Suspended';
 
+export interface VendorStoreConfig {
+  logo?: string;
+  banner?: string;
+  themeColor?: string;
+  accentColor?: string;
+  showHeroSlider?: boolean;
+  showPromos?: boolean;
+  showCategories?: boolean;
+  showFilterTabs?: boolean;
+  aboutTitle?: string;
+  aboutStory?: string;
+  aboutMission?: string;
+  featuredProducts?: string[];
+}
+
 export interface Vendor {
   id: string;          // e.g. "V001"
   accessKey: string;   // secret key for vendor login
@@ -14,6 +29,7 @@ export interface Vendor {
   revenue: number;
   status: VendorStatus;
   joinedDate: string;
+  storeConfig?: VendorStoreConfig;
 }
 
 interface VendorState {
@@ -35,6 +51,20 @@ const initialState: VendorState = {
       revenue: 450000,
       status: 'Active',
       joinedDate: '2024-01-15',
+      storeConfig: {
+        logo: '',
+        banner: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1200&q=80',
+        themeColor: '#1e3a8a',
+        accentColor: '#f97316',
+        showHeroSlider: true,
+        showPromos: true,
+        showCategories: true,
+        showFilterTabs: true,
+        aboutTitle: 'About Tech Solutions Nepal',
+        aboutStory: 'Tech Solutions Nepal is your leading destination for premium laptops, smartphones, and smart devices. We strive to provide original and high quality tech products to our customers across Nepal.',
+        aboutMission: 'To power every household in Nepal with advanced electronics and unbeatable support.',
+        featuredProducts: ['1', '2']
+      }
     },
     {
       id: 'V002',
@@ -48,6 +78,20 @@ const initialState: VendorState = {
       revenue: 820000,
       status: 'Active',
       joinedDate: '2024-02-20',
+      storeConfig: {
+        logo: '',
+        banner: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&q=80',
+        themeColor: '#db2777',
+        accentColor: '#4c1d95',
+        showHeroSlider: true,
+        showPromos: true,
+        showCategories: true,
+        showFilterTabs: true,
+        aboutTitle: 'Kathmandu Fashion Hub',
+        aboutStory: 'Kathmandu Fashion Hub is your modern closet for the latest fashion trends and accessories. We curate the best designer clothes, shoes, and jewelry for every occasion.',
+        aboutMission: 'To bring the most premium and trendy fashion look directly to your wardrobe with ease.',
+        featuredProducts: ['4']
+      }
     },
     {
       id: 'V003',
@@ -61,6 +105,20 @@ const initialState: VendorState = {
       revenue: 0,
       status: 'Pending Approval',
       joinedDate: '2024-06-01',
+      storeConfig: {
+        logo: '',
+        banner: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1200&q=80',
+        themeColor: '#0f172a',
+        accentColor: '#3b82f6',
+        showHeroSlider: true,
+        showPromos: true,
+        showCategories: true,
+        showFilterTabs: true,
+        aboutTitle: 'Gadget Galaxy',
+        aboutStory: 'A galaxy of gadgets at your fingertips. Bringing next-generation tech directly to your doorstep.',
+        aboutMission: 'Democratizing smart tech for all.',
+        featuredProducts: ['3']
+      }
     },
     {
       id: 'V004',
