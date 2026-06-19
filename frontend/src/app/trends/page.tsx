@@ -11,6 +11,17 @@ export default function TrendsPage() {
   const { wishlist = [] } = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
 
+  // Fallback for hydrated state that lacks trendsBanner.items
+  const defaultItems = [
+    { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 2.20 },
+    { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 4.40 },
+    { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 6.60 },
+    { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 8.80 }
+  ];
+  const items = trendsBanner?.items && trendsBanner.items.length === 4
+    ? trendsBanner.items
+    : defaultItems;
+
   return (
     <div className="pb-4 bg-gray-50 min-h-screen">
       {/* Top Banner */}
@@ -23,7 +34,7 @@ export default function TrendsPage() {
           <p className="text-sm md:text-lg opacity-90 mb-4 md:mb-8">{trendsBanner?.subtitle}</p>
           
           <div className="flex gap-3 md:gap-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-            {(trendsBanner?.items || []).map((item, i) => (
+            {items.map((item, i) => (
               <div key={i} className="w-20 md:w-32 h-24 md:h-40 bg-white rounded-md md:rounded-lg flex-shrink-0 p-1 md:p-2 relative shadow-sm">
                 <div className="w-full h-16 md:h-28 bg-gray-100 rounded-sm md:rounded mb-1 overflow-hidden">
                   <img src={item.image || 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop'} className="w-full h-full object-cover" />

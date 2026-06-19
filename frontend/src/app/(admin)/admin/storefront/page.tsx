@@ -31,19 +31,31 @@ export default function StorefrontBuilderPage() {
     }
   };
 
+  const getTrendsItems = () => {
+    const defaultItems = [
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 2.20 },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 4.40 },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 6.60 },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 8.80 }
+    ];
+    if (!trendsBanner?.items || trendsBanner.items.length < 4) {
+      return defaultItems;
+    }
+    return trendsBanner.items;
+  };
+
   const handleTrendsItemImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUrl = reader.result as string;
-        const currentItems = trendsBanner?.items ? [...trendsBanner.items] : [];
-        const updatedItems = [...currentItems];
-        updatedItems[index] = {
-          ...updatedItems[index],
+        const currentItems = [...getTrendsItems()];
+        currentItems[index] = {
+          ...currentItems[index],
           image: dataUrl
         };
-        dispatch(updateTrendsBanner({ ...trendsBanner, items: updatedItems }));
+        dispatch(updateTrendsBanner({ ...trendsBanner, items: currentItems }));
       };
       reader.readAsDataURL(file);
     }
@@ -234,8 +246,7 @@ export default function StorefrontBuilderPage() {
             <div className="md:col-span-2 border-t border-gray-100 pt-5 mt-3">
               <h4 className="text-sm font-bold text-gray-800 mb-3">Featured Products in Banner (4 Max)</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[0, 1, 2, 3].map((idx) => {
-                  const item = trendsBanner?.items?.[idx] || { image: '', price: 0 };
+                {getTrendsItems().map((item, idx) => {
                   return (
                     <div key={idx} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-2">
                       <div className="flex justify-between items-center">
@@ -250,10 +261,9 @@ export default function StorefrontBuilderPage() {
                             type="text" 
                             value={item.image || ''} 
                             onChange={(e) => {
-                              const currentItems = trendsBanner?.items ? [...trendsBanner.items] : [];
-                              const updatedItems = [...currentItems];
-                              updatedItems[idx] = { ...updatedItems[idx], image: e.target.value };
-                              dispatch(updateTrendsBanner({ ...trendsBanner, items: updatedItems }));
+                              const currentItems = [...getTrendsItems()];
+                              currentItems[idx] = { ...currentItems[idx], image: e.target.value };
+                              dispatch(updateTrendsBanner({ ...trendsBanner, items: currentItems }));
                             }} 
                             placeholder="Image URL" 
                             className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-black focus:outline-none text-gray-900" 
@@ -273,10 +283,9 @@ export default function StorefrontBuilderPage() {
                           step="0.01"
                           value={item.price || 0} 
                           onChange={(e) => {
-                            const currentItems = trendsBanner?.items ? [...trendsBanner.items] : [];
-                            const updatedItems = [...currentItems];
-                            updatedItems[idx] = { ...updatedItems[idx], price: parseFloat(e.target.value) || 0 };
-                            dispatch(updateTrendsBanner({ ...trendsBanner, items: updatedItems }));
+                            const currentItems = [...getTrendsItems()];
+                            currentItems[idx] = { ...currentItems[idx], price: parseFloat(e.target.value) || 0 };
+                            dispatch(updateTrendsBanner({ ...trendsBanner, items: currentItems }));
                           }} 
                           className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-black focus:outline-none text-gray-900 font-mono" 
                         />
