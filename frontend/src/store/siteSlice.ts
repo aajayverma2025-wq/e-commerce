@@ -40,6 +40,7 @@ interface ThemeConfig {
   primaryColor: string;
   accentColor: string;
   logoText: string;
+  logoImage?: string;
 }
 
 interface NavigationLink {

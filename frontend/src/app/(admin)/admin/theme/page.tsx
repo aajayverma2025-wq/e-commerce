@@ -12,12 +12,24 @@ export default function AdminThemePage() {
   const [primaryColor, setPrimaryColor] = useState(theme.primaryColor);
   const [accentColor, setAccentColor] = useState(theme.accentColor);
   const [logoText, setLogoText] = useState(theme.logoText);
+  const [logoImage, setLogoImage] = useState(theme.logoImage || '');
   const [navLinks, setNavLinks] = useState([...navigation]);
 
   const handleSave = () => {
-    dispatch(updateTheme({ primaryColor, accentColor, logoText }));
+    dispatch(updateTheme({ primaryColor, accentColor, logoText, logoImage }));
     dispatch(updateNavigation(navLinks));
     alert('Theme & UI updated successfully! Changes are live on the storefront.');
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const addNavLink = () => {
@@ -50,6 +62,37 @@ export default function AdminThemePage() {
               onChange={(e) => setLogoText(e.target.value)}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-gray-900" 
             />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Logo Image (Overrides text logo)</label>
+            <div className="flex gap-4 items-center">
+              <input 
+                type="text" 
+                value={logoImage}
+                onChange={(e) => setLogoImage(e.target.value)}
+                placeholder="Paste Image URL or upload a file"
+                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-gray-900 text-sm" 
+              />
+              <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg cursor-pointer border border-gray-200 transition-colors font-medium text-sm flex-shrink-0">
+                Upload Logo
+                <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+              </label>
+              {logoImage && (
+                <div className="w-16 h-10 border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center flex-shrink-0">
+                  <img src={logoImage} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                </div>
+              )}
+            </div>
+            {logoImage && (
+              <button 
+                type="button" 
+                onClick={() => setLogoImage('')}
+                className="text-xs text-red-500 underline mt-1.5"
+              >
+                Remove logo image (Revert to text logo)
+              </button>
+            )}
           </div>
           
           <div className="grid grid-cols-2 gap-6">

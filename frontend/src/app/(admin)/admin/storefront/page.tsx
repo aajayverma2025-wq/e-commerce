@@ -13,7 +13,7 @@ export default function StorefrontBuilderPage() {
   // Helper: convert trendsTabs array to comma string for display
   const tabsStr = trendsTabs ? trendsTabs.join(', ') : '';
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'banner' | 'trends') => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'banner' | 'trends' | 'logo') => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -21,6 +21,8 @@ export default function StorefrontBuilderPage() {
         const dataUrl = reader.result as string;
         if (field === 'banner') {
           dispatch(updateBanner({ ...banner, backgroundImage: dataUrl }));
+        } else if (field === 'logo') {
+          dispatch(updateTheme({ ...theme, logoImage: dataUrl }));
         } else {
           dispatch(updateTrendsBanner({ ...trendsBanner, backgroundImage: dataUrl }));
         }
@@ -74,6 +76,37 @@ export default function StorefrontBuilderPage() {
                 onChange={(e) => dispatch(updateTheme({ ...theme, logoText: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:outline-none text-gray-900" 
               />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Logo Image (Overrides text)</label>
+              <div className="flex gap-2 items-center">
+                <input 
+                  type="text" 
+                  value={theme?.logoImage || ''}
+                  onChange={(e) => dispatch(updateTheme({ ...theme, logoImage: e.target.value }))}
+                  placeholder="Image URL" 
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:outline-none text-gray-900 text-sm" 
+                />
+                <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-2.5 rounded-lg cursor-pointer border border-gray-200 transition-colors flex-shrink-0 font-medium">
+                  Upload Logo
+                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo')} className="hidden" />
+                </label>
+                {theme?.logoImage && (
+                  <div className="w-12 h-10 border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center flex-shrink-0">
+                    <img src={theme.logoImage} alt="Logo" className="max-w-full max-h-full object-contain" />
+                  </div>
+                )}
+              </div>
+              {theme?.logoImage && (
+                <button 
+                  type="button" 
+                  onClick={() => dispatch(updateTheme({ ...theme, logoImage: '' }))}
+                  className="text-xs text-red-500 underline mt-1"
+                >
+                  Remove logo image
+                </button>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

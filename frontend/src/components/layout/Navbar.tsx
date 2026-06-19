@@ -94,8 +94,18 @@ export default function Navbar() {
         <div className="hidden md:flex flex-col">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Logo */}
-            <Link href="/" className="text-3xl font-black tracking-tight italic" style={{ color: isMounted ? theme.primaryColor : '#000' }}>
-              {isMounted ? theme.logoText : 'TRENDMART'}
+            <Link href="/" className="flex items-center gap-2">
+              {isMounted && theme.logoImage ? (
+                <img 
+                  src={theme.logoImage} 
+                  alt={theme.logoText || 'Logo'} 
+                  className="h-10 w-auto object-contain max-w-[220px]" 
+                />
+              ) : (
+                <span className="text-3xl font-black tracking-tight italic" style={{ color: isMounted ? theme.primaryColor : '#000' }}>
+                  {isMounted ? theme.logoText : 'TRENDMART'}
+                </span>
+              )}
             </Link>
 
             {/* Centered Search */}
