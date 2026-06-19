@@ -45,7 +45,7 @@ export default function BottomNav() {
                 {tab.name}
               </span>
               
-              {isMounted && tab.badge > 0 && (
+              {isMounted && tab.badge !== undefined && tab.badge > 0 && (
                 <span className="absolute top-1 right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {tab.badge}
                 </span>

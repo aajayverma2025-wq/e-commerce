@@ -5,7 +5,7 @@ export interface WishlistItem {
   name: string;
   price: number;
   image: string;
-  sold: string;
+  sold?: string | number;
 }
 
 interface UserState {

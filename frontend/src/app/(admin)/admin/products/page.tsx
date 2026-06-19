@@ -13,7 +13,7 @@ const emptyForm = (defaultCat: string) => ({
   originalPrice: 0,
   discount: 0,
   stock: 0,
-  status: 'In Stock' as const,
+  status: 'In Stock' as 'In Stock' | 'Low Stock' | 'Out of Stock',
   images: [] as string[],
   rating: 4.5,
   reviews: 0,

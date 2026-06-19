@@ -8,6 +8,7 @@ interface BannerData {
   colorFrom: string;
   colorTo: string;
   buttonColor: string;
+  backgroundImage?: string;
 }
 
 interface TrendsBannerData {

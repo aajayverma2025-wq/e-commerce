@@ -1,0 +1,31 @@
+[debug] [2026-06-19T09:25:18.127Z] ----------------------------------------------------------------------
+[debug] [2026-06-19T09:25:18.133Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\USER\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --project magastore-e25c7
+[debug] [2026-06-19T09:25:18.134Z] CLI Version:   15.20.0
+[debug] [2026-06-19T09:25:18.134Z] Platform:      win32
+[debug] [2026-06-19T09:25:18.134Z] Node Version:  v24.15.0
+[debug] [2026-06-19T09:25:18.135Z] Time:          Fri Jun 19 2026 15:10:18 GMT+0545 (Nepal Time)
+[debug] [2026-06-19T09:25:18.135Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-19T09:25:28.530Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-19T09:25:28.531Z] > authorizing via signed-in user (yatrax18@gmail.com)
+[debug] [2026-06-19T09:25:28.532Z] [iam] checking project magastore-e25c7 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-06-19T09:25:28.534Z] Checked if tokens are valid: true, expires at: 1781864706182
+[debug] [2026-06-19T09:25:28.534Z] Checked if tokens are valid: true, expires at: 1781864706182
+[debug] [2026-06-19T09:25:28.535Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/magastore-e25c7:testIamPermissions [none]
+[debug] [2026-06-19T09:25:28.536Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/magastore-e25c7:testIamPermissions  x-goog-user-project=magastore-e25c7
+[debug] [2026-06-19T09:25:28.536Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/magastore-e25c7:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-19T09:25:30.240Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/magastore-e25c7:testIamPermissions 403
+[debug] [2026-06-19T09:25:30.241Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/magastore-e25c7:testIamPermissions {"error":{"code":403,"message":"Caller does not have required permission to use project magastore-e25c7. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=magastore-e25c7 and then retry. Propagation of the new permission may take a few minutes.","status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"USER_PROJECT_DENIED","domain":"googleapis.com","metadata":{"containerInfo":"magastore-e25c7","consoleUrl":"https://console.developers.google.com/iam-admin/iam?project=magastore-e25c7","service":"cloudresourcemanager.googleapis.com","consumer":"projects/magastore-e25c7"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Caller does not have required permission to use project magastore-e25c7. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=magastore-e25c7 and then retry. Propagation of the new permission may take a few minutes."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developer console IAM admin","url":"https://console.developers.google.com/iam-admin/iam?project=magastore-e25c7"}]}]}}
+[debug] [2026-06-19T09:25:30.244Z] [iam] error while checking permissions, command may fail: Request to https://cloudresourcemanager.googleapis.com/v1/projects/magastore-e25c7:testIamPermissions had HTTP Error: 403, Caller does not have required permission to use project magastore-e25c7. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=magastore-e25c7 and then retry. Propagation of the new permission may take a few minutes.
+[debug] [2026-06-19T09:25:30.246Z] Checked if tokens are valid: true, expires at: 1781864706182
+[debug] [2026-06-19T09:25:30.247Z] Checked if tokens are valid: true, expires at: 1781864706182
+[debug] [2026-06-19T09:25:30.248Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/magastore-e25c7 [none]
+[debug] [2026-06-19T09:25:30.808Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/magastore-e25c7 403
+[debug] [2026-06-19T09:25:30.808Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/magastore-e25c7 {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-06-19T09:25:30.809Z] Request to https://firebase.googleapis.com/v1beta1/projects/magastore-e25c7 had HTTP Error: 403, The caller does not have permission
+[debug] [2026-06-19T09:25:31.086Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/magastore-e25c7 had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\USER\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\USER\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:333:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to get Firebase project magastore-e25c7. Please make sure the project exists and your account has permission to access it.
