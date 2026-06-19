@@ -28,7 +28,22 @@ export default function Home() {
 
   // Slider State & Data from Redux
   const [currentSlide, setCurrentSlide] = useState(0);
-  const activeBanners = banners.filter(b => b.isActive);
+  const bannerList = banners && banners.length > 0 
+    ? banners 
+    : [
+        {
+          title: banner?.title || 'Mega Electronics Sale',
+          subtitle: banner?.subtitle || 'Up to 40% off on top brands',
+          buttonText: banner?.buttonText || 'Shop Now',
+          isActive: banner?.isActive !== undefined ? banner.isActive : true,
+          colorFrom: banner?.colorFrom || '#1e3a8a',
+          colorTo: banner?.colorTo || '#4338ca',
+          buttonColor: banner?.buttonColor || '#f97316',
+          backgroundImage: banner?.backgroundImage || 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1600&q=80&auto=format&fit=crop',
+          link: banner?.link || '/category/Electronics',
+        }
+      ];
+  const activeBanners = bannerList.filter(b => b.isActive);
 
   useEffect(() => {
     if (activeBanners.length <= 1) return;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, Plus, Trash2, Edit2, MoveUp, MoveDown, CheckCircle, Eye, EyeOff, Image as ImageIcon, Link as LinkIcon, Palette } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateBanners } from '@/store/siteSlice';
@@ -18,11 +18,31 @@ interface BannerData {
 }
 
 export default function AdminBannerPage() {
-  const { banners = [], appCategories = [] } = useAppSelector((state) => state.site);
+  const { banner, banners = [], appCategories = [] } = useAppSelector((state) => state.site);
   const dispatch = useAppDispatch();
 
   // Local state for banners list
-  const [localBanners, setLocalBanners] = useState<BannerData[]>([...banners]);
+  const [localBanners, setLocalBanners] = useState<BannerData[]>(banners);
+
+  useEffect(() => {
+    if (!banners || banners.length === 0) {
+      const defaultList = [
+        {
+          title: banner?.title || 'Mega Electronics Sale',
+          subtitle: banner?.subtitle || 'Up to 40% off on top brands',
+          buttonText: banner?.buttonText || 'Shop Now',
+          isActive: banner?.isActive !== undefined ? banner.isActive : true,
+          colorFrom: banner?.colorFrom || '#1e3a8a',
+          colorTo: banner?.colorTo || '#4338ca',
+          buttonColor: banner?.buttonColor || '#f97316',
+          backgroundImage: banner?.backgroundImage || 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1600&q=80&auto=format&fit=crop',
+          link: banner?.link || '/category/Electronics',
+        }
+      ];
+      setLocalBanners(defaultList);
+      dispatch(updateBanners(defaultList));
+    }
+  }, []);
   
   // Selected slide index for editing, -1 means adding new, null means none
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
