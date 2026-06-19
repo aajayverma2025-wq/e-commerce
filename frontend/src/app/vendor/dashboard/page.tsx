@@ -24,12 +24,15 @@ export default function VendorDashboardPage() {
   const vendorId = user?.vendorId;
   const currentVendor = vendors.find(v => v.id === vendorId);
 
+  const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
+
   // Redirection checks
   useEffect(() => {
+    if (!rehydrated) return;
     if (!isAuthenticated || user?.role !== 'vendor' || !vendorId) {
       router.push('/vendor/login');
     }
-  }, [isAuthenticated, user, vendorId, router]);
+  }, [rehydrated, isAuthenticated, user, vendorId, router]);
 
   // Sidebar Tab State
   const [activeTab, setActiveTab] = useState<'overview' | 'storefront' | 'products'>('overview');
@@ -64,6 +67,7 @@ export default function VendorDashboardPage() {
 
   // Sync Storefront Builder Form when vendor profile loads
   useEffect(() => {
+    if (!rehydrated) return;
     if (currentVendor?.storeConfig) {
       const config = currentVendor.storeConfig;
       setLogo(config.logo || '');
@@ -81,7 +85,7 @@ export default function VendorDashboardPage() {
     } else if (currentVendor) {
       setAboutTitle(currentVendor.businessName);
     }
-  }, [currentVendor]);
+  }, [rehydrated, currentVendor]);
 
   // Filter products by current vendor
   const vendorProducts = allProducts.filter(p => p.vendorId === vendorId);
