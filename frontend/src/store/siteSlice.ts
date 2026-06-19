@@ -9,6 +9,7 @@ interface BannerData {
   colorTo: string;
   buttonColor: string;
   backgroundImage?: string;
+  link?: string;
 }
 
 interface TrendsBannerData {
@@ -63,6 +64,7 @@ export interface TrendItem {
 
 interface SiteState {
   banner: BannerData;
+  banners: BannerData[];
   trendsBanner: TrendsBannerData;
   theme: ThemeConfig;
   navigation: NavigationLink[];
@@ -83,6 +85,52 @@ const initialState: SiteState = {
     colorTo: '#4338ca',
     buttonColor: '#f97316',
   },
+  banners: [
+    {
+      title: 'Mega Discount',
+      subtitle: 'Up to 40% off on top brands',
+      buttonText: 'Shop Now',
+      isActive: true,
+      colorFrom: '#1e3a8a',
+      colorTo: '#4338ca',
+      buttonColor: '#f97316',
+      backgroundImage: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Electronics',
+    },
+    {
+      title: 'Summer Fashion Fest',
+      subtitle: 'Fresh styles & premium looks at 50% off',
+      buttonText: 'Explore Collection',
+      isActive: true,
+      colorFrom: '#db2777',
+      colorTo: '#4c1d95',
+      buttonColor: '#ec4899',
+      backgroundImage: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Women',
+    },
+    {
+      title: 'Kids Fashion & Wear',
+      subtitle: 'Bright colors and cute styles for little ones',
+      buttonText: 'Shop Kids',
+      isActive: true,
+      colorFrom: '#78350f',
+      colorTo: '#450a0a',
+      buttonColor: '#eab308',
+      backgroundImage: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Kids',
+    },
+    {
+      title: 'Elite Shoe Showcase',
+      subtitle: 'Step into premium comfort and quality',
+      buttonText: 'View Shoes',
+      isActive: true,
+      colorFrom: '#064e3b',
+      colorTo: '#0f172a',
+      buttonColor: '#10b981',
+      backgroundImage: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Shoes',
+    }
+  ],
   trendsBanner: {
     title: '# OceanStory',
     tag: 'HOT TOP 10',
@@ -142,6 +190,15 @@ export const siteSlice = createSlice({
   reducers: {
     updateBanner: (state, action: PayloadAction<BannerData>) => {
       state.banner = action.payload;
+      if (state.banners && state.banners.length > 0) {
+        state.banners[0] = { ...state.banners[0], ...action.payload };
+      }
+    },
+    updateBanners: (state, action: PayloadAction<BannerData[]>) => {
+      state.banners = action.payload;
+      if (action.payload.length > 0) {
+        state.banner = { ...state.banner, ...action.payload[0] };
+      }
     },
     updateTrendsBanner: (state, action: PayloadAction<TrendsBannerData>) => {
       state.trendsBanner = action.payload;
@@ -187,5 +244,5 @@ export const siteSlice = createSlice({
   },
 });
 
-export const { updateBanner, updateTrendsBanner, updateTrendsTabs, updateTheme, updateNavigation, updateAppCategories, updateTrendsFeed, incrementTrends, updatePaymentSettings, updateUserDashboardConfig } = siteSlice.actions;
+export const { updateBanner, updateBanners, updateTrendsBanner, updateTrendsTabs, updateTheme, updateNavigation, updateAppCategories, updateTrendsFeed, incrementTrends, updatePaymentSettings, updateUserDashboardConfig } = siteSlice.actions;
 export default siteSlice.reducer;

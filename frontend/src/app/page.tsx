@@ -9,7 +9,7 @@ import { toggleWishlist } from '@/store/userSlice';
 import { Zap, Truck, ShoppingCart, Flame, Heart, LayoutGrid, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Home() {
-  const { banner, appCategories = [] } = useAppSelector((state) => state.site);
+  const { banner, banners = [], appCategories = [] } = useAppSelector((state) => state.site);
   const allProducts = useAppSelector((state) => state.products.items).filter(p => !p.hidden);
   const { wishlist = [] } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
@@ -26,66 +26,26 @@ export default function Home() {
   // Active tab: 'all' or a category name
   const [activeTab, setActiveTab] = useState('all');
 
-  // Slider State & Data
+  // Slider State & Data from Redux
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  const bannerSlides = [
-    {
-      id: '1',
-      title: banner.title || 'Mega Discount',
-      subtitle: banner.subtitle || 'Up to 40% off on top brands',
-      buttonText: banner.buttonText || 'Shop Now',
-      buttonColor: banner.buttonColor || '#f97316',
-      bgGradient: 'from-blue-950/90 to-indigo-900/80',
-      image: banner.backgroundImage || 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1600&q=80&auto=format&fit=crop',
-      link: '/category/Electronics',
-    },
-    {
-      id: '2',
-      title: 'Summer Fashion Fest',
-      subtitle: 'Fresh styles & premium looks at 50% off',
-      buttonText: 'Explore Collection',
-      buttonColor: '#ec4899',
-      bgGradient: 'from-pink-950/90 to-purple-950/80',
-      image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&q=80&auto=format&fit=crop',
-      link: '/category/Women',
-    },
-    {
-      id: '3',
-      title: 'Kids Fashion & Wear',
-      subtitle: 'Bright colors and cute styles for little ones',
-      buttonText: 'Shop Kids',
-      buttonColor: '#eab308',
-      bgGradient: 'from-amber-950/90 to-red-950/80',
-      image: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=1600&q=80&auto=format&fit=crop',
-      link: '/category/Kids',
-    },
-    {
-      id: '4',
-      title: 'Elite Shoe Showcase',
-      subtitle: 'Step into premium comfort and quality',
-      buttonText: 'View Shoes',
-      buttonColor: '#10b981',
-      bgGradient: 'from-emerald-950/90 to-slate-900/80',
-      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1600&q=80&auto=format&fit=crop',
-      link: '/category/Shoes',
-    }
-  ];
+  const activeBanners = banners.filter(b => b.isActive);
 
   useEffect(() => {
-    if (!banner.isActive) return;
+    if (activeBanners.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+      setCurrentSlide((prev) => (prev + 1) % activeBanners.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [banner.isActive, bannerSlides.length]);
+  }, [activeBanners.length]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+    if (activeBanners.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % activeBanners.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
+    if (activeBanners.length === 0) return;
+    setCurrentSlide((prev) => (prev - 1 + activeBanners.length) % activeBanners.length);
   };
 
   // Smart match: handles singular/plural and case differences
@@ -111,27 +71,35 @@ export default function Home() {
   return (
     <div className="pb-4">
       {/* Hero Banner Slider */}
-      {banner.isActive && (
+      {activeBanners.length > 0 && (
         <div className="relative w-full h-56 md:h-[420px] text-white overflow-hidden group">
           {/* Slides Container */}
           <div 
             className="flex w-full h-full transition-transform duration-700 ease-in-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
-            {bannerSlides.map((slide) => (
+            {activeBanners.map((slide, index) => (
               <div 
-                key={slide.id} 
+                key={index} 
                 className="w-full h-full flex-shrink-0 relative flex items-center justify-center"
               >
                 {/* Background Image with Overlay */}
                 <div className="absolute inset-0 z-0">
-                  <img 
-                    src={slide.image} 
-                    alt={slide.title} 
-                    className="w-full h-full object-cover object-center transform scale-105 group-hover:scale-100 transition-transform duration-[5000ms]"
-                  />
+                  {slide.backgroundImage && (
+                    <img 
+                      src={slide.backgroundImage} 
+                      alt={slide.title} 
+                      className="w-full h-full object-cover object-center transform scale-105 group-hover:scale-100 transition-transform duration-[5000ms]"
+                    />
+                  )}
                   {/* Linear Gradient Overlay for readability */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${slide.bgGradient} mix-blend-multiply opacity-85`}></div>
+                  <div 
+                    className="absolute inset-0 mix-blend-multiply"
+                    style={{ 
+                      background: `linear-gradient(to right, ${slide.colorFrom || '#1e3a8a'}, ${slide.colorTo || '#4338ca'})`,
+                      opacity: 0.85 
+                    }}
+                  ></div>
                   <div className="absolute inset-0 bg-black/20"></div>
                 </div>
 
@@ -146,7 +114,7 @@ export default function Home() {
                   <p className="text-xs md:text-lg mb-6 drop-shadow-md font-medium text-white/90 max-w-md md:max-w-xl">
                     {slide.subtitle}
                   </p>
-                  <Link href={slide.link}>
+                  <Link href={slide.link || '#'}>
                     <span 
                       className="inline-block text-white font-black uppercase text-xs md:text-sm tracking-wider py-3 px-8 rounded-full shadow-xl hover:scale-105 transition-transform duration-300 active:scale-95 cursor-pointer"
                       style={{ backgroundColor: slide.buttonColor }}
@@ -175,7 +143,7 @@ export default function Home() {
 
           {/* Dots Indicator */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-            {bannerSlides.map((_, idx) => (
+            {activeBanners.map((_, idx) => (
               <button 
                 key={idx}
                 onClick={() => setCurrentSlide(idx)}
