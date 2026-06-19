@@ -19,13 +19,18 @@ interface BannerData {
 
 export default function AdminBannerPage() {
   const { banner, banners = [], appCategories = [] } = useAppSelector((state) => state.site);
+  const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
   const dispatch = useAppDispatch();
 
   // Local state for banners list
-  const [localBanners, setLocalBanners] = useState<BannerData[]>(banners);
+  const [localBanners, setLocalBanners] = useState<BannerData[]>([]);
 
   useEffect(() => {
-    if (!banners || banners.length === 0) {
+    if (!rehydrated) return;
+
+    if (banners && banners.length > 0) {
+      setLocalBanners(banners);
+    } else {
       const defaultList = [
         {
           title: banner?.title || 'Mega Electronics Sale',
@@ -42,7 +47,7 @@ export default function AdminBannerPage() {
       setLocalBanners(defaultList);
       dispatch(updateBanners(defaultList));
     }
-  }, []);
+  }, [rehydrated, banners, banner, dispatch]);
   
   // Selected slide index for editing, -1 means adding new, null means none
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
