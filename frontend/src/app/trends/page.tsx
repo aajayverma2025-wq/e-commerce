@@ -23,12 +23,12 @@ export default function TrendsPage() {
           <p className="text-sm md:text-lg opacity-90 mb-4 md:mb-8">{trendsBanner?.subtitle}</p>
           
           <div className="flex gap-3 md:gap-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-            {[1, 2, 3, 4].map(i => (
+            {(trendsBanner?.items || []).map((item, i) => (
               <div key={i} className="w-20 md:w-32 h-24 md:h-40 bg-white rounded-md md:rounded-lg flex-shrink-0 p-1 md:p-2 relative shadow-sm">
                 <div className="w-full h-16 md:h-28 bg-gray-100 rounded-sm md:rounded mb-1 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop" className="w-full h-full object-cover" />
+                  <img src={item.image || 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop'} className="w-full h-full object-cover" />
                 </div>
-                <div className="text-[10px] md:text-sm text-gray-800 text-center font-bold">${(2.20 * i).toFixed(2)}</div>
+                <div className="text-[10px] md:text-sm text-gray-800 text-center font-bold">${(item.price || 0).toFixed(2)}</div>
               </div>
             ))}
           </div>

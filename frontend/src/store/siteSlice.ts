@@ -12,11 +12,17 @@ interface BannerData {
   link?: string;
 }
 
+interface TrendsBannerItem {
+  image: string;
+  price: number;
+}
+
 interface TrendsBannerData {
   title: string;
   tag: string;
   subtitle: string;
   backgroundImage: string;
+  items: TrendsBannerItem[];
 }
 
 interface PaymentSettings {
@@ -137,6 +143,12 @@ const initialState: SiteState = {
     tag: 'HOT TOP 10',
     subtitle: 'Feel the wave of OceanStory!',
     backgroundImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&fit=crop',
+    items: [
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 2.20 },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 4.40 },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 6.60 },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 8.80 }
+    ]
   },
   theme: {
     primaryColor: '#1e3a8a', // blue-900

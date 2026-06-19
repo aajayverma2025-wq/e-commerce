@@ -31,6 +31,24 @@ export default function StorefrontBuilderPage() {
     }
   };
 
+  const handleTrendsItemImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        const currentItems = trendsBanner?.items ? [...trendsBanner.items] : [];
+        const updatedItems = [...currentItems];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          image: dataUrl
+        };
+        dispatch(updateTrendsBanner({ ...trendsBanner, items: updatedItems }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const showSavedToast = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
@@ -209,6 +227,72 @@ export default function StorefrontBuilderPage() {
                 <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
                   <span className="bg-white/90 px-3 py-1 rounded text-xs font-bold shadow-sm backdrop-blur-sm">Live Preview</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Featured Products */}
+            <div className="md:col-span-2 border-t border-gray-100 pt-5 mt-3">
+              <h4 className="text-sm font-bold text-gray-800 mb-3">Featured Products in Banner (4 Max)</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[0, 1, 2, 3].map((idx) => {
+                  const item = trendsBanner?.items?.[idx] || { image: '', price: 0 };
+                  return (
+                    <div key={idx} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-bold text-gray-500">Product #{idx + 1}</span>
+                      </div>
+                      
+                      {/* Image Upload/URL */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-semibold text-gray-500">Image</label>
+                        <div className="flex gap-1.5">
+                          <input 
+                            type="text" 
+                            value={item.image || ''} 
+                            onChange={(e) => {
+                              const currentItems = trendsBanner?.items ? [...trendsBanner.items] : [];
+                              const updatedItems = [...currentItems];
+                              updatedItems[idx] = { ...updatedItems[idx], image: e.target.value };
+                              dispatch(updateTrendsBanner({ ...trendsBanner, items: updatedItems }));
+                            }} 
+                            placeholder="Image URL" 
+                            className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-black focus:outline-none text-gray-900" 
+                          />
+                          <label className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-[10px] px-2.5 py-1 rounded cursor-pointer flex items-center justify-center font-medium">
+                            Up
+                            <input type="file" accept="image/*" onChange={(e) => handleTrendsItemImageUpload(idx, e)} className="hidden" />
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Price */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-semibold text-gray-500">Price ($)</label>
+                        <input 
+                          type="number" 
+                          step="0.01"
+                          value={item.price || 0} 
+                          onChange={(e) => {
+                            const currentItems = trendsBanner?.items ? [...trendsBanner.items] : [];
+                            const updatedItems = [...currentItems];
+                            updatedItems[idx] = { ...updatedItems[idx], price: parseFloat(e.target.value) || 0 };
+                            dispatch(updateTrendsBanner({ ...trendsBanner, items: updatedItems }));
+                          }} 
+                          className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-black focus:outline-none text-gray-900 font-mono" 
+                        />
+                      </div>
+
+                      {/* Preview */}
+                      <div className="w-full h-12 rounded bg-white overflow-hidden border border-gray-200 flex items-center justify-center relative mt-1">
+                        {item.image ? (
+                          <img src={item.image} alt="" className="max-w-full max-h-full object-contain" />
+                        ) : (
+                          <span className="text-[9px] text-gray-400">No Image</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
