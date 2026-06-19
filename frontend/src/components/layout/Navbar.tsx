@@ -36,8 +36,12 @@ export default function Navbar() {
           <div className="flex items-center gap-2 md:gap-4 font-semibold">
             <Link href="/admin" className="hover:text-black transition-colors">Admin Panel</Link>
             <span className="text-gray-300">|</span>
-            {isMounted && isAuthenticated && user?.role === 'vendor' ? (
-              <Link href="/vendor/dashboard" className="text-orange-600 hover:text-orange-700 transition-colors font-bold">Vendor Dashboard</Link>
+            {isMounted ? (
+              isAuthenticated && user?.role === 'vendor' ? (
+                <Link href="/vendor/dashboard" className="text-orange-600 hover:text-orange-700 transition-colors font-bold">Vendor Dashboard</Link>
+              ) : (
+                <Link href="/vendor/login" className="hover:text-black transition-colors">Vendor Portal</Link>
+              )
             ) : (
               <Link href="/vendor/login" className="hover:text-black transition-colors">Vendor Portal</Link>
             )}
@@ -144,7 +148,11 @@ export default function Navbar() {
               <Link href="/me" className="flex flex-col items-center gap-1 text-gray-700 hover:text-black transition-colors">
                 <User size={24} />
                 <span className="text-xs font-bold">
-                  {isMounted && isAuthenticated && user ? user.name.split(' ')[0] : 'Sign In'}
+                  {isMounted ? (
+                    isAuthenticated && user ? user.name.split(' ')[0] : 'Sign In'
+                  ) : (
+                    'Sign In'
+                  )}
                 </span>
               </Link>
               
