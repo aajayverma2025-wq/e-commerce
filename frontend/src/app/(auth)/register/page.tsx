@@ -9,6 +9,7 @@ import { login } from '@/store/userSlice';
 export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ export default function RegisterPage() {
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock registration logic
-    dispatch(login({ email, name, role: 'customer' }));
+    dispatch(login({ email, name, phone, role: 'customer' }));
     router.push('/');
   };
 
@@ -60,6 +61,19 @@ export default function RegisterPage() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
+              />
+            </div>
+            <div>
+              <label htmlFor="phone-number" className="sr-only">Contact Number</label>
+              <input
+                id="phone-number"
+                name="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Contact Number"
               />
             </div>
             <div>

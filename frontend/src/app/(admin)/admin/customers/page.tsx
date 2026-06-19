@@ -1,11 +1,18 @@
+"use client";
+
 import { Search, Eye, Ban } from 'lucide-react';
+import { useAppSelector } from '@/store/hooks';
 
 export default function AdminCustomersPage() {
-  const dummyCustomers = [
-    { id: 'C001', name: 'John Doe', email: 'john@example.com', orders: 12, spent: '$1,245.00', status: 'Active' },
-    { id: 'C002', name: 'Jane Smith', email: 'jane@example.com', orders: 5, spent: '$340.00', status: 'Active' },
-    { id: 'C003', name: 'Mike Johnson', email: 'mike@example.com', orders: 0, spent: '$0.00', status: 'Inactive' },
+  const { customers = [] } = useAppSelector((state) => state.user);
+
+  const fallbackCustomers = [
+    { id: 'C001', name: 'John Doe', email: 'john@example.com', phone: '+1 555-0101', orders: 12, spent: '$1,245.00', status: 'Active' },
+    { id: 'C002', name: 'Jane Smith', email: 'jane@example.com', phone: '+1 555-0102', orders: 5, spent: '$340.00', status: 'Active' },
+    { id: 'C003', name: 'Mike Johnson', email: 'mike@example.com', phone: '+1 555-0103', orders: 0, spent: '$0.00', status: 'Inactive' },
   ];
+
+  const displayCustomers = customers.length > 0 ? customers : fallbackCustomers;
 
   return (
     <div className="space-y-6">
@@ -28,6 +35,7 @@ export default function AdminCustomersPage() {
             <tr className="bg-white text-gray-500 text-sm border-b border-gray-100">
               <th className="p-4 font-medium">Customer</th>
               <th className="p-4 font-medium">Email</th>
+              <th className="p-4 font-medium">Contact Number</th>
               <th className="p-4 font-medium">Total Orders</th>
               <th className="p-4 font-medium">Total Spent</th>
               <th className="p-4 font-medium">Status</th>
@@ -35,10 +43,11 @@ export default function AdminCustomersPage() {
             </tr>
           </thead>
           <tbody>
-            {dummyCustomers.map((customer) => (
+            {displayCustomers.map((customer) => (
               <tr key={customer.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td className="p-4 font-medium text-gray-900">{customer.name}</td>
                 <td className="p-4 text-gray-500">{customer.email}</td>
+                <td className="p-4 text-gray-500">{customer.phone || 'Not Provided'}</td>
                 <td className="p-4 text-gray-500">{customer.orders}</td>
                 <td className="p-4 text-gray-500">{customer.spent}</td>
                 <td className="p-4">
