@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, Plus, Trash2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateTheme, updateNavigation } from '@/store/siteSlice';
@@ -8,12 +8,26 @@ import { updateTheme, updateNavigation } from '@/store/siteSlice';
 export default function AdminThemePage() {
   const { theme, navigation } = useAppSelector((state) => state.site);
   const dispatch = useAppDispatch();
+  const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
 
   const [primaryColor, setPrimaryColor] = useState(theme.primaryColor);
   const [accentColor, setAccentColor] = useState(theme.accentColor);
   const [logoText, setLogoText] = useState(theme.logoText);
   const [logoImage, setLogoImage] = useState(theme.logoImage || '');
   const [navLinks, setNavLinks] = useState([...navigation]);
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    setPrimaryColor(theme.primaryColor);
+    setAccentColor(theme.accentColor);
+    setLogoText(theme.logoText);
+    setLogoImage(theme.logoImage || '');
+  }, [rehydrated, theme]);
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    setNavLinks([...navigation]);
+  }, [rehydrated, navigation]);
 
   const handleSave = () => {
     dispatch(updateTheme({ primaryColor, accentColor, logoText, logoImage }));

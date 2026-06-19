@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, CreditCard, Wallet, Truck } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updatePaymentSettings } from '@/store/siteSlice';
@@ -8,6 +8,7 @@ import { updatePaymentSettings } from '@/store/siteSlice';
 export default function AdminSettingsPage() {
   const { paymentSettings } = useAppSelector(state => state.site);
   const dispatch = useAppDispatch();
+  const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
 
   // Local State for Payment Settings
   const [stripeEnabled, setStripeEnabled] = useState(paymentSettings?.stripeEnabled ?? true);
@@ -17,6 +18,15 @@ export default function AdminSettingsPage() {
   const [paypalClientId, setPaypalClientId] = useState(paymentSettings?.paypalClientId ?? '');
   
   const [codEnabled, setCodEnabled] = useState(paymentSettings?.codEnabled ?? true);
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    setStripeEnabled(paymentSettings?.stripeEnabled ?? true);
+    setStripePublicKey(paymentSettings?.stripePublicKey ?? '');
+    setPaypalEnabled(paymentSettings?.paypalEnabled ?? false);
+    setPaypalClientId(paymentSettings?.paypalClientId ?? '');
+    setCodEnabled(paymentSettings?.codEnabled ?? true);
+  }, [rehydrated, paymentSettings]);
 
   const handleSave = () => {
     dispatch(updatePaymentSettings({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { updateGatewaySettings } from '@/store/paymentSlice';
 import { ArrowLeft, Save, CreditCard, Wallet, Truck, DollarSign, Globe } from 'lucide-react';
@@ -9,8 +9,14 @@ import Link from 'next/link';
 export default function PaymentSettingsPage() {
   const { gatewaySettings } = useAppSelector(state => state.payments);
   const dispatch = useAppDispatch();
+  const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
 
   const [settings, setSettings] = useState({ ...gatewaySettings });
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    setSettings({ ...gatewaySettings });
+  }, [rehydrated, gatewaySettings]);
 
   const update = (key: keyof typeof settings, value: string | boolean | number) => {
     setSettings(prev => ({ ...prev, [key]: value }));

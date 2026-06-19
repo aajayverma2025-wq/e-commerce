@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, User, LayoutList } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateUserDashboardConfig } from '@/store/siteSlice';
@@ -8,6 +8,7 @@ import { updateUserDashboardConfig } from '@/store/siteSlice';
 export default function UserDashboardConfigPage() {
   const { userDashboardConfig } = useAppSelector(state => state.site);
   const dispatch = useAppDispatch();
+  const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
 
   // Initialize with optional chaining for safety during hydration
   const [showStatsBar, setShowStatsBar] = useState(userDashboardConfig?.showStatsBar ?? true);
@@ -16,6 +17,16 @@ export default function UserDashboardConfigPage() {
   const [showWishlistTab, setShowWishlistTab] = useState(userDashboardConfig?.showWishlistTab ?? true);
   const [showFollowingTab, setShowFollowingTab] = useState(userDashboardConfig?.showFollowingTab ?? true);
   const [showHistoryTab, setShowHistoryTab] = useState(userDashboardConfig?.showHistoryTab ?? true);
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    setShowStatsBar(userDashboardConfig?.showStatsBar ?? true);
+    setShowMyOrders(userDashboardConfig?.showMyOrders ?? true);
+    setShowCustomerService(userDashboardConfig?.showCustomerService ?? true);
+    setShowWishlistTab(userDashboardConfig?.showWishlistTab ?? true);
+    setShowFollowingTab(userDashboardConfig?.showFollowingTab ?? true);
+    setShowHistoryTab(userDashboardConfig?.showHistoryTab ?? true);
+  }, [rehydrated, userDashboardConfig]);
 
   const handleSave = () => {
     dispatch(updateUserDashboardConfig({
