@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { addToCart } from '@/store/cartSlice';
 import { toggleWishlist } from '@/store/userSlice';
-import { Zap, Truck, ShoppingCart, Flame, Heart, LayoutGrid } from 'lucide-react';
+import { Zap, Truck, ShoppingCart, Flame, Heart, LayoutGrid, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Home() {
   const { banner, appCategories = [] } = useAppSelector((state) => state.site);
@@ -25,6 +25,68 @@ export default function Home() {
 
   // Active tab: 'all' or a category name
   const [activeTab, setActiveTab] = useState('all');
+
+  // Slider State & Data
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const bannerSlides = [
+    {
+      id: '1',
+      title: banner.title || 'Mega Discount',
+      subtitle: banner.subtitle || 'Up to 40% off on top brands',
+      buttonText: banner.buttonText || 'Shop Now',
+      buttonColor: banner.buttonColor || '#f97316',
+      bgGradient: 'from-blue-950/90 to-indigo-900/80',
+      image: banner.backgroundImage || 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Electronics',
+    },
+    {
+      id: '2',
+      title: 'Summer Fashion Fest',
+      subtitle: 'Fresh styles & premium looks at 50% off',
+      buttonText: 'Explore Collection',
+      buttonColor: '#ec4899',
+      bgGradient: 'from-pink-950/90 to-purple-950/80',
+      image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Women',
+    },
+    {
+      id: '3',
+      title: 'Kids Fashion & Wear',
+      subtitle: 'Bright colors and cute styles for little ones',
+      buttonText: 'Shop Kids',
+      buttonColor: '#eab308',
+      bgGradient: 'from-amber-950/90 to-red-950/80',
+      image: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Kids',
+    },
+    {
+      id: '4',
+      title: 'Elite Shoe Showcase',
+      subtitle: 'Step into premium comfort and quality',
+      buttonText: 'View Shoes',
+      buttonColor: '#10b981',
+      bgGradient: 'from-emerald-950/90 to-slate-900/80',
+      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1600&q=80&auto=format&fit=crop',
+      link: '/category/Shoes',
+    }
+  ];
+
+  useEffect(() => {
+    if (!banner.isActive) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [banner.isActive, bannerSlides.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
+  };
 
   // Smart match: handles singular/plural and case differences
   const matchCategory = (productCat: string, filterCat: string) => {
@@ -48,23 +110,81 @@ export default function Home() {
 
   return (
     <div className="pb-4">
-      {/* Hero Banner */}
+      {/* Hero Banner Slider */}
       {banner.isActive && (
-        <div 
-          className="relative w-full h-48 md:h-96 flex items-center justify-center text-white overflow-hidden"
-          style={{ background: `linear-gradient(to right, ${banner.colorFrom || '#1e3a8a'}, ${banner.colorTo || '#4338ca'})` }}
-        >
-          <div className="text-center z-10 p-4 w-full">
-            <h1 className="text-3xl md:text-6xl font-black italic mb-2 tracking-tighter drop-shadow-md">{banner.title}</h1>
-            <p className="text-sm md:text-xl mb-4 drop-shadow-md font-medium">{banner.subtitle}</p>
-            <button 
-              className="text-white font-bold py-3 px-8 rounded-full shadow-lg hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: banner.buttonColor || '#f97316' }}
-            >
-              {banner.buttonText}
-            </button>
+        <div className="relative w-full h-56 md:h-[420px] text-white overflow-hidden group">
+          {/* Slides Container */}
+          <div 
+            className="flex w-full h-full transition-transform duration-700 ease-in-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {bannerSlides.map((slide) => (
+              <div 
+                key={slide.id} 
+                className="w-full h-full flex-shrink-0 relative flex items-center justify-center"
+              >
+                {/* Background Image with Overlay */}
+                <div className="absolute inset-0 z-0">
+                  <img 
+                    src={slide.image} 
+                    alt={slide.title} 
+                    className="w-full h-full object-cover object-center transform scale-105 group-hover:scale-100 transition-transform duration-[5000ms]"
+                  />
+                  {/* Linear Gradient Overlay for readability */}
+                  <div className={`absolute inset-0 bg-gradient-to-r ${slide.bgGradient} mix-blend-multiply opacity-85`}></div>
+                  <div className="absolute inset-0 bg-black/20"></div>
+                </div>
+
+                {/* Content */}
+                <div className="text-center z-10 p-6 max-w-3xl mx-auto flex flex-col items-center">
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest bg-white/20 backdrop-blur-md px-3 py-1 rounded-full mb-3 border border-white/10">
+                    Special Offer
+                  </span>
+                  <h1 className="text-2xl md:text-6xl font-black italic mb-3 tracking-tighter drop-shadow-lg leading-tight uppercase">
+                    {slide.title}
+                  </h1>
+                  <p className="text-xs md:text-lg mb-6 drop-shadow-md font-medium text-white/90 max-w-md md:max-w-xl">
+                    {slide.subtitle}
+                  </p>
+                  <Link href={slide.link}>
+                    <span 
+                      className="inline-block text-white font-black uppercase text-xs md:text-sm tracking-wider py-3 px-8 rounded-full shadow-xl hover:scale-105 transition-transform duration-300 active:scale-95 cursor-pointer"
+                      style={{ backgroundColor: slide.buttonColor }}
+                    >
+                      {slide.buttonText}
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 skew-x-12 transform origin-bottom-right" style={{ backgroundColor: banner.colorTo || '#4338ca' }}></div>
+
+          {/* Manual Controls (Arrows) */}
+          <button 
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 rounded-full bg-black/20 hover:bg-black/60 text-white flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 focus:outline-none z-20"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button 
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 rounded-full bg-black/20 hover:bg-black/60 text-white flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 focus:outline-none z-20"
+          >
+            <ChevronRight size={20} />
+          </button>
+
+          {/* Dots Indicator */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+            {bannerSlides.map((_, idx) => (
+              <button 
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  currentSlide === idx ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       )}
 
