@@ -33,15 +33,18 @@ export default function StorefrontBuilderPage() {
 
   const getTrendsItems = () => {
     const defaultItems = [
-      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 2.20 },
-      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 4.40 },
-      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 6.60 },
-      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 8.80 }
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 2.20, link: '/product/1' },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 4.40, link: '/product/2' },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 6.60, link: '/product/3' },
+      { image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=150&h=150&fit=crop', price: 8.80, link: '/product/4' }
     ];
     if (!trendsBanner?.items || trendsBanner.items.length < 4) {
       return defaultItems;
     }
-    return trendsBanner.items;
+    return trendsBanner.items.map((item, idx) => ({
+      ...item,
+      link: item.link !== undefined ? item.link : (defaultItems[idx]?.link || '')
+    }));
   };
 
   const handleTrendsItemImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -288,6 +291,22 @@ export default function StorefrontBuilderPage() {
                             dispatch(updateTrendsBanner({ ...trendsBanner, items: currentItems }));
                           }} 
                           className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-black focus:outline-none text-gray-900 font-mono" 
+                        />
+                      </div>
+
+                      {/* Redirect Link */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-semibold text-gray-500">Redirect Link</label>
+                        <input 
+                          type="text" 
+                          value={item.link || ''} 
+                          onChange={(e) => {
+                            const currentItems = [...getTrendsItems()];
+                            currentItems[idx] = { ...currentItems[idx], link: e.target.value };
+                            dispatch(updateTrendsBanner({ ...trendsBanner, items: currentItems }));
+                          }} 
+                          placeholder="e.g. /product/123"
+                          className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-black focus:outline-none text-gray-900" 
                         />
                       </div>
 

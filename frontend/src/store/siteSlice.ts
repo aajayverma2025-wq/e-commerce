@@ -15,6 +15,7 @@ interface BannerData {
 interface TrendsBannerItem {
   image: string;
   price: number;
+  link?: string;
 }
 
 interface TrendsBannerData {
