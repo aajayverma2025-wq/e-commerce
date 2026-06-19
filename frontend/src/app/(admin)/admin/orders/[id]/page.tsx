@@ -1,0 +1,172 @@
+"use client";
+
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { updateOrderStatus, cancelOrder, OrderStatus } from '@/store/orderSlice';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowLeft, MapPin, CreditCard, Package, CheckCircle } from 'lucide-react';
+import { use } from 'react';
+
+const statusStyles: Record<OrderStatus, string> = {
+  Pending:    'bg-yellow-100 text-yellow-700 border-yellow-200',
+  Processing: 'bg-blue-100 text-blue-700 border-blue-200',
+  Shipped:    'bg-purple-100 text-purple-700 border-purple-200',
+  Delivered:  'bg-green-100 text-green-700 border-green-200',
+  Cancelled:  'bg-red-100 text-red-700 border-red-200',
+};
+
+const allStatuses: OrderStatus[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+
+const nextStatusMap: Partial<Record<OrderStatus, OrderStatus>> = {
+  Pending: 'Processing',
+  Processing: 'Shipped',
+  Shipped: 'Delivered',
+};
+
+export default function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const dispatch = useAppDispatch();
+  const allOrders = useAppSelector(state => state.orders.items);
+  const order = allOrders.find(o => o.id === id);
+
+  if (!order) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <Package size={60} className="text-gray-200 mb-4" />
+        <h2 className="text-xl font-bold text-gray-700 mb-2">Order Not Found</h2>
+        <Link href="/admin/orders" className="text-orange-500 hover:underline">Back to Orders</Link>
+      </div>
+    );
+  }
+
+  const steps: OrderStatus[] = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+  const currentStep = steps.indexOf(order.status);
+  const nextStatus = nextStatusMap[order.status];
+
+  return (
+    <div className="space-y-6 max-w-5xl">
+      <div className="flex items-center justify-between">
+        <Link href="/admin/orders" className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors text-sm">
+          <ArrowLeft size={16} /> Back to Orders
+        </Link>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Order {order.id}</h2>
+          <p className="text-gray-500 text-sm mt-1">Placed on {order.date} · {order.items.length} item(s)</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className={`px-4 py-2 rounded-full text-sm font-bold border ${statusStyles[order.status]}`}>
+            {order.status}
+          </span>
+          {nextStatus && (
+            <button
+              onClick={() => dispatch(updateOrderStatus({ id: order.id, status: nextStatus }))}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+            >
+              <CheckCircle size={16} /> Mark as {nextStatus}
+            </button>
+          )}
+          {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
+            <button
+              onClick={() => dispatch(cancelOrder(order.id))}
+              className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            >
+              Cancel Order
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Tracking */}
+      {order.status !== 'Cancelled' && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h3 className="font-bold text-gray-800 mb-6">Order Progress</h3>
+          <div className="flex items-center">
+            {steps.map((step, i) => (
+              <div key={step} className="flex items-center flex-1">
+                <div className="flex flex-col items-center">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
+                    i <= currentStep ? 'bg-orange-500 text-white shadow-lg shadow-orange-100' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    {i < currentStep ? '✓' : i + 1}
+                  </div>
+                  <span className={`text-xs mt-2 font-medium whitespace-nowrap ${i <= currentStep ? 'text-orange-600' : 'text-gray-400'}`}>
+                    {step}
+                  </span>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className={`flex-1 h-1 mb-5 rounded-full mx-1 ${i < currentStep ? 'bg-orange-400' : 'bg-gray-100'}`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Change Status */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h3 className="font-bold text-gray-800 mb-4">Update Status Manually</h3>
+        <div className="flex flex-wrap gap-2">
+          {allStatuses.map(s => (
+            <button key={s}
+              onClick={() => dispatch(updateOrderStatus({ id: order.id, status: s }))}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all ${
+                order.status === s
+                  ? statusStyles[s] + ' border-current'
+                  : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'
+              }`}>
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Items */}
+        <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h3 className="font-bold text-gray-800 mb-4">Items</h3>
+          <div className="space-y-3">
+            {order.items.map(item => (
+              <div key={item.id} className="flex items-center gap-4 bg-gray-50 rounded-xl p-3">
+                <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white border border-gray-100 flex-shrink-0">
+                  <Image src={item.image} alt={item.name} fill className="object-contain p-1" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-800">{item.name}</p>
+                  <p className="text-sm text-gray-500">Qty: {item.quantity} × ${item.price}</p>
+                </div>
+                <span className="font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-gray-100 mt-4 pt-4 text-right">
+            <p className="text-xl font-black text-gray-900">Order Total: {order.total}</p>
+          </div>
+        </div>
+
+        {/* Customer & Payment Info */}
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <MapPin size={16} className="text-orange-500" /> Shipping Address
+            </h3>
+            <p className="font-semibold text-gray-800">{order.customer}</p>
+            <p className="text-sm text-gray-500 mt-1">{order.address}</p>
+            <p className="text-sm text-gray-500">{order.city} {order.postalCode}</p>
+            <p className="text-sm text-gray-500 mt-1">{order.phone}</p>
+            <p className="text-sm text-gray-500">{order.email}</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <CreditCard size={16} className="text-orange-500" /> Payment Info
+            </h3>
+            <p className="text-sm font-medium text-gray-800">{order.paymentMethod}</p>
+            <p className="text-sm text-gray-500 mt-1">Status: <span className="text-green-600 font-semibold">Paid</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
