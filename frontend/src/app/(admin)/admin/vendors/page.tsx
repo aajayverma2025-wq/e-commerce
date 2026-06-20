@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import { Search, UserCheck, UserX, Eye, Plus, X, RefreshCw, Copy, Trash2, KeyRound, Building2, ChevronDown } from 'lucide-react';
+import { Search, UserCheck, UserX, Eye, Plus, X, RefreshCw, Copy, Trash2, KeyRound, Building2, ChevronDown, ShieldCheck, DollarSign } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { addVendor, updateVendorStatus, deleteVendor, regenerateAccessKey, Vendor, VendorStatus } from '@/store/vendorSlice';
+import { addVendor, updateVendorStatus, updateVendor, deleteVendor, regenerateAccessKey, Vendor, VendorStatus } from '@/store/vendorSlice';
 
 const CATEGORIES = ['Electronics', 'Fashion', 'Food & Organic', 'Home & Living', 'Sports', 'Beauty', 'Books', 'Toys', 'Other'];
 
@@ -346,8 +346,45 @@ export default function AdminVendorsPage() {
                   </div>
                 </div>
 
+                {/* KYC Verification & Commission */}
+                <div className="grid grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1.5 flex items-center gap-1">
+                      <ShieldCheck size={12} className="text-orange-500" /> KYC Verification
+                    </div>
+                    <select
+                      value={latest.kycStatus || 'Verified'}
+                      onChange={(e) => dispatch(updateVendor({ id: latest.id, kycStatus: e.target.value }))}
+                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-orange-500 bg-white text-gray-800"
+                    >
+                      <option value="Verified">Verified</option>
+                      <option value="Pending">Pending Approval</option>
+                      <option value="Not Submitted">Not Submitted</option>
+                    </select>
+                    <p className="text-[10px] text-gray-400 mt-1">Doc: {latest.kycDocument || 'citizenship_scan.jpg'}</p>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1.5 flex items-center gap-1">
+                      <DollarSign size={12} className="text-orange-500" /> Platform Commission
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        value={latest.commissionRate !== undefined ? latest.commissionRate : 10}
+                        onChange={(e) => dispatch(updateVendor({ id: latest.id, commissionRate: parseInt(e.target.value) || 0 }))}
+                        className="w-16 px-2 py-1 border border-gray-200 rounded-lg text-xs text-center font-bold text-gray-800"
+                        min="0"
+                        max="100"
+                      />
+                      <span className="text-xs font-bold text-gray-500">% fee</span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-1">Fee charged per order</p>
+                  </div>
+                </div>
+
                 {/* Access Key */}
-                <div>
+                <div className="border-t border-gray-100 pt-4">
                   <div className="text-xs text-gray-400 mb-2 flex items-center gap-1">
                     <KeyRound size={12} /> Vendor Access Key
                   </div>

@@ -1,21 +1,40 @@
 "use client";
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Mail, Calendar, Camera, Search, Heart, Menu, ShoppingCart, User } from 'lucide-react';
 import { useAppSelector } from '@/store/hooks';
 import { useEffect, useState } from 'react';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { totalQuantity } = useAppSelector(state => state.cart);
   const { appCategories = [], theme } = useAppSelector(state => state.site);
   const { user, isAuthenticated } = useAppSelector(state => state.user);
   const [isMounted, setIsMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isMounted && typeof window !== 'undefined') {
+      if (pathname === '/search') {
+        const params = new URLSearchParams(window.location.search);
+        setSearchQuery(params.get('q') || '');
+      } else {
+        setSearchQuery('');
+      }
+    }
+  }, [pathname, isMounted]);
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   // Robust deduplication — normalize to lowercase to catch 'New Category' vs 'new category'
   const seenNames = new Set<string>();
@@ -77,11 +96,19 @@ export default function Navbar() {
               <input 
                 type="text" 
                 placeholder="Search..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSearch();
+                }}
                 className="w-full bg-gray-100 rounded-full py-1.5 pl-4 pr-20 text-sm focus:outline-none text-gray-900"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
                 <Camera size={18} className="text-gray-400" />
-                <div className="bg-black text-white p-1 rounded-full cursor-pointer">
+                <div 
+                  onClick={handleSearch}
+                  className="bg-black text-white p-1 rounded-full cursor-pointer"
+                >
                   <Search size={14} />
                 </div>
               </div>
@@ -133,11 +160,19 @@ export default function Navbar() {
               <input 
                 type="text" 
                 placeholder="Search products, trends, and more..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSearch();
+                }}
                 className="w-full bg-gray-100 border border-gray-200 rounded-full py-2.5 pl-6 pr-24 focus:outline-none focus:ring-2 focus:ring-black text-gray-900"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-3">
                 <Camera size={20} className="text-gray-500 hover:text-black cursor-pointer" />
-                <button className="bg-black text-white px-4 py-1.5 rounded-full font-bold hover:bg-gray-800 transition-colors flex items-center gap-1">
+                <button 
+                  onClick={handleSearch}
+                  className="bg-black text-white px-4 py-1.5 rounded-full font-bold hover:bg-gray-800 transition-colors flex items-center gap-1"
+                >
                   <Search size={16} /> Search
                 </button>
               </div>

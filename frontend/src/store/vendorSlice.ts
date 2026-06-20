@@ -30,6 +30,9 @@ export interface Vendor {
   status: VendorStatus;
   joinedDate: string;
   storeConfig?: VendorStoreConfig;
+  kycStatus?: string;
+  kycDocument?: string;
+  commissionRate?: number;
 }
 
 interface VendorState {

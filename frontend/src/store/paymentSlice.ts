@@ -26,9 +26,21 @@ export interface RefundRequest {
   date: string;
 }
 
+export interface PayoutRequest {
+  id: string;
+  vendorId: string;
+  businessName: string;
+  amount: number;
+  bankName: string;
+  accountNumber: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  date: string;
+}
+
 interface PaymentState {
   transactions: Transaction[];
   refundRequests: RefundRequest[];
+  payoutRequests: PayoutRequest[];
   gatewaySettings: {
     stripeEnabled: boolean;
     stripePublicKey: string;
@@ -53,6 +65,10 @@ const initialState: PaymentState = {
   refundRequests: [
     { id: 'REF-001', orderId: 'ORD-100005', transactionId: 'TXN-005', customer: 'Ahmed Raza', amount: 348, reason: 'Item not as described', status: 'Approved', date: today },
     { id: 'REF-002', orderId: 'ORD-100002', transactionId: 'TXN-002', customer: 'Sarah Ahmed', amount: 348, reason: 'Changed my mind', status: 'Pending', date: today },
+  ],
+  payoutRequests: [
+    { id: 'PAY-001', vendorId: 'V001', businessName: 'Tech Solutions Nepal', amount: 45000, bankName: 'Global IME Bank', accountNumber: '0123456789012', status: 'Approved', date: '2024-05-10' },
+    { id: 'PAY-002', vendorId: 'V001', businessName: 'Tech Solutions Nepal', amount: 20000, bankName: 'Nabil Bank', accountNumber: '0123456789012', status: 'Pending', date: today },
   ],
   gatewaySettings: {
     stripeEnabled: true,
@@ -83,12 +99,30 @@ export const paymentSlice = createSlice({
       const ref = state.refundRequests.find(r => r.id === action.payload.id);
       if (ref) {
         ref.status = action.payload.status;
-        // If approved, mark transaction as refunded
         if (action.payload.status === 'Approved') {
           const txn = state.transactions.find(t => t.id === ref.transactionId);
           if (txn) txn.status = 'Refunded';
         }
       }
+    },
+    addPayoutRequest: (state, action: PayloadAction<Omit<PayoutRequest, 'id' | 'status' | 'date'>>) => {
+      const id = `PAY-${Math.floor(Math.random() * 900000) + 100000}`;
+      if (!state.payoutRequests) {
+        state.payoutRequests = [];
+      }
+      state.payoutRequests.unshift({
+        ...action.payload,
+        id,
+        status: 'Pending',
+        date: new Date().toISOString().split('T')[0]
+      });
+    },
+    updatePayoutStatus: (state, action: PayloadAction<{ id: string; status: 'Approved' | 'Rejected' }>) => {
+      if (!state.payoutRequests) {
+        state.payoutRequests = [];
+      }
+      const payout = state.payoutRequests.find(p => p.id === action.payload.id);
+      if (payout) payout.status = action.payload.status;
     },
     updateGatewaySettings: (state, action: PayloadAction<PaymentState['gatewaySettings']>) => {
       state.gatewaySettings = action.payload;
@@ -96,5 +130,10 @@ export const paymentSlice = createSlice({
   },
 });
 
-export const { addTransaction, updateTransactionStatus, addRefundRequest, updateRefundStatus, updateGatewaySettings } = paymentSlice.actions;
+export const { 
+  addTransaction, updateTransactionStatus, 
+  addRefundRequest, updateRefundStatus, 
+  addPayoutRequest, updatePayoutStatus, 
+  updateGatewaySettings 
+} = paymentSlice.actions;
 export default paymentSlice.reducer;
