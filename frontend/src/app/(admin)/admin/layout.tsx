@@ -1,3 +1,8 @@
+"use client";
+
+import { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 
 export default function AdminLayout({
@@ -5,6 +10,38 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { user, isAuthenticated } = useAppSelector(state => state.user);
+  const router = useRouter();
+  const pathname = usePathname();
+  const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
+
+  const isLoginPage = pathname === '/admin/login';
+
+  useEffect(() => {
+    if (!rehydrated) return;
+    
+    if (!isLoginPage && (!isAuthenticated || user?.role !== 'admin')) {
+      router.push('/admin/login');
+    }
+  }, [rehydrated, isAuthenticated, user, isLoginPage, router]);
+
+  // If page is the login page, render children directly without sidebar/headers
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
+  // Prevent flash of dashboard content before redirecting
+  if (!rehydrated || !isAuthenticated || user?.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm font-semibold tracking-wider opacity-85">Authenticating...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <AdminSidebar />

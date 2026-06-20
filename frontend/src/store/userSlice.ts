@@ -29,6 +29,10 @@ interface UserState {
   isAuthenticated: boolean;
   wishlist: WishlistItem[];
   customers: Customer[];
+  adminCredentials?: {
+    username: string;
+    password: string;
+  };
 }
 
 const initialState: UserState = {
@@ -40,6 +44,10 @@ const initialState: UserState = {
     { id: 'C002', name: 'Jane Smith', email: 'jane@example.com', phone: '+1 555-0102', orders: 5, spent: '$340.00', status: 'Active' },
     { id: 'C003', name: 'Mike Johnson', email: 'mike@example.com', phone: '+1 555-0103', orders: 0, spent: '$0.00', status: 'Inactive' },
   ],
+  adminCredentials: {
+    username: 'admin',
+    password: 'admin123'
+  }
 };
 
 export const userSlice = createSlice({
@@ -89,8 +97,19 @@ export const userSlice = createSlice({
         state.wishlist.push(action.payload);
       }
     },
+    updateAdminCredentials: (state, action: PayloadAction<{ username?: string; password?: string }>) => {
+      if (!state.adminCredentials) {
+        state.adminCredentials = { username: 'admin', password: 'admin123' };
+      }
+      if (action.payload.username !== undefined) {
+        state.adminCredentials.username = action.payload.username;
+      }
+      if (action.payload.password !== undefined) {
+        state.adminCredentials.password = action.payload.password;
+      }
+    },
   },
 });
 
-export const { login, logout, toggleWishlist } = userSlice.actions;
+export const { login, logout, toggleWishlist, updateAdminCredentials } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, CreditCard, Wallet, Truck } from 'lucide-react';
+import { Save, CreditCard, Wallet, Truck, ShieldAlert } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updatePaymentSettings } from '@/store/siteSlice';
+import { updateAdminCredentials } from '@/store/userSlice';
 
 export default function AdminSettingsPage() {
   const { paymentSettings } = useAppSelector(state => state.site);
+  const { adminCredentials, user } = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const rehydrated = useAppSelector((state: any) => state._persist?.rehydrated);
 
@@ -19,6 +21,12 @@ export default function AdminSettingsPage() {
   
   const [codEnabled, setCodEnabled] = useState(paymentSettings?.codEnabled ?? true);
 
+  // Local State for Admin Credentials
+  const [adminUsername, setAdminUsername] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+
+  const isSuperAdmin = user?.role === 'admin';
+
   useEffect(() => {
     if (!rehydrated) return;
     setStripeEnabled(paymentSettings?.stripeEnabled ?? true);
@@ -26,7 +34,8 @@ export default function AdminSettingsPage() {
     setPaypalEnabled(paymentSettings?.paypalEnabled ?? false);
     setPaypalClientId(paymentSettings?.paypalClientId ?? '');
     setCodEnabled(paymentSettings?.codEnabled ?? true);
-  }, [rehydrated, paymentSettings]);
+    setAdminUsername(adminCredentials?.username || 'admin');
+  }, [rehydrated, paymentSettings, adminCredentials]);
 
   const handleSave = () => {
     dispatch(updatePaymentSettings({
@@ -39,9 +48,80 @@ export default function AdminSettingsPage() {
     alert('Settings saved successfully!');
   };
 
+  const handleSaveCredentials = () => {
+    if (!isSuperAdmin) {
+      alert('Access Denied: Only Super Admin users can update credentials.');
+      return;
+    }
+    if (!adminUsername.trim()) {
+      alert('User ID cannot be empty.');
+      return;
+    }
+    
+    dispatch(updateAdminCredentials({
+      username: adminUsername,
+      ...(adminPassword ? { password: adminPassword } : {})
+    }));
+    
+    setAdminPassword(''); // Clear password field
+    alert('Super Admin credentials updated successfully!');
+  };
+
   return (
     <div className="space-y-6 max-w-4xl">
       <h2 className="text-2xl font-bold text-gray-800">Platform Settings</h2>
+
+      {/* Super Admin Credentials Section */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <ShieldAlert className="text-orange-500" size={20} /> Super Admin Credentials
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">Change the User ID and Password used for Admin Panel access.</p>
+          </div>
+        </div>
+        <div className="p-6 space-y-4">
+          {!isSuperAdmin && (
+            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-semibold">
+              Warning: You are not authorized as a Super Admin to view or change these credentials.
+            </div>
+          )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Super Admin User ID</label>
+              <input 
+                type="text" 
+                value={adminUsername} 
+                onChange={(e) => setAdminUsername(e.target.value)} 
+                disabled={!isSuperAdmin}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-gray-900 disabled:bg-gray-50 disabled:text-gray-400 font-semibold" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">New Password (leave empty to keep current)</label>
+              <input 
+                type="password" 
+                placeholder="••••••••"
+                value={adminPassword} 
+                onChange={(e) => setAdminPassword(e.target.value)} 
+                disabled={!isSuperAdmin}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-gray-900 disabled:bg-gray-50 disabled:text-gray-400" 
+              />
+            </div>
+          </div>
+          <div className="flex justify-end pt-2">
+            <button 
+              onClick={handleSaveCredentials}
+              disabled={!isSuperAdmin}
+              className="bg-gray-900 hover:bg-gray-800 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl font-bold transition-colors text-xs flex items-center gap-1.5 shadow-sm"
+            >
+              <Save size={14} /> Update Credentials
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100">
@@ -148,8 +228,8 @@ export default function AdminSettingsPage() {
       </div>
 
       <div className="flex justify-end">
-        <button onClick={handleSave} className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium">
-          <Save size={18} /> Save Settings
+        <button onClick={handleSave} className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-xl flex items-center gap-2 transition-colors font-bold shadow-sm text-xs">
+          <Save size={14} /> Save Platform Settings
         </button>
       </div>
     </div>
